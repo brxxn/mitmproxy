@@ -120,7 +120,7 @@ class ConsoleMaster(master.Master):
             return m
         if m := os.environ.get("EDITOR"):
             return m
-        for editor in "vim":
+        for editor in "vim", "sensible-editor", "nano":
             if shutil.which(editor):
                 return editor
         if os.name == "nt":
