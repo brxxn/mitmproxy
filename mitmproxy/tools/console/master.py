@@ -11,6 +11,8 @@ import tempfile
 import threading
 from typing import TypeVar
 
+import tornado.httpserver
+import tornado.ioloop
 import urwid
 from tornado.platform.asyncio import AddThreadSelectorEventLoop
 
@@ -29,6 +31,8 @@ from mitmproxy.tools.console import keymap
 from mitmproxy.tools.console import palettes
 from mitmproxy.tools.console import signals
 from mitmproxy.tools.console import window
+from mitmproxy.tools.console.interact.addon import InteractAddon
+from mitmproxy.tools.console.interact.app import Application
 
 
 T = TypeVar("T", str, bytes)
@@ -56,7 +60,10 @@ class ConsoleMaster(master.Master):
             consoleaddons.ConsoleAddon(self),
             keymap.KeymapConfig(self),
             errorcheck.ErrorCheck(repeat_errors_on_stderr=True),
+            InteractAddon(self)
         )
+
+        self.interact_app = Application(self)
 
         self.window: window.Window | None = None
 
@@ -113,7 +120,7 @@ class ConsoleMaster(master.Master):
             return m
         if m := os.environ.get("EDITOR"):
             return m
-        for editor in "sensible-editor", "nano", "vim":
+        for editor in "vim":
             if shutil.which(editor):
                 return editor
         if os.name == "nt":
@@ -229,6 +236,14 @@ class ConsoleMaster(master.Master):
         self.window.refresh()
 
         self.loop.start()
+
+        tornado.ioloop.IOLoop.current()
+
+        http_server = tornado.httpserver.HTTPServer(self.interact_app)
+        try:
+            http_server.listen(self.options.interact_server_port, self.options.interact_server_host)
+        except OSError as e:
+            print('err')
 
         await super().running()
 

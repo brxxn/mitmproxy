@@ -1,45 +1,62 @@
 # mitmproxy
 
-[![Continuous Integration Status](https://github.com/mitmproxy/mitmproxy/workflows/CI/badge.svg?branch=main)](https://github.com/mitmproxy/mitmproxy/actions?query=branch%3Amain)
-[![autofix.ci: enabled](https://shields.mitmproxy.org/badge/autofix.ci-yes-success?logo=data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCB0cmFuc2Zvcm09InNjYWxlKDAuMDYxLC0wLjA2MSkgdHJhbnNsYXRlKC0yNTAsLTE3NTApIiBkPSJNMTMyNSAtMzQwcS0xMTUgMCAtMTY0LjUgMzIuNXQtNDkuNSAxMTQuNXEwIDMyIDUgNzAuNXQxMC41IDcyLjV0NS41IDU0djIyMHEtMzQgLTkgLTY5LjUgLTE0dC03MS41IC01cS0xMzYgMCAtMjUxLjUgNjJ0LTE5MSAxNjl0LTkyLjUgMjQxcS05MCAxMjAgLTkwIDI2NnEwIDEwOCA0OC41IDIwMC41dDEzMiAxNTUuNXQxODguNSA4MXExNSA5OSAxMDAuNSAxODAuNXQyMTcgMTMwLjV0MjgyLjUgNDlxMTM2IDAgMjU2LjUgLTQ2IHQyMDkgLTEyNy41dDEyOC41IC0xODkuNXExNDkgLTgyIDIyNyAtMjEzLjV0NzggLTI5OS41cTAgLTEzNiAtNTggLTI0NnQtMTY1LjUgLTE4NC41dC0yNTYuNSAtMTAzLjVsLTI0MyAtMzAwdi01MnEwIC0yNyAzLjUgLTU2LjV0Ni41IC01Ny41dDMgLTUycTAgLTg1IC00MS41IC0xMTguNXQtMTU3LjUgLTMzLjV6TTEzMjUgLTI2MHE3NyAwIDk4IDE0LjV0MjEgNTcuNXEwIDI5IC0zIDY4dC02LjUgNzN0LTMuNSA0OHY2NGwyMDcgMjQ5IHEtMzEgMCAtNjAgNS41dC01NCAxMi41bC0xMDQgLTEyM3EtMSAzNCAtMiA2My41dC0xIDU0LjVxMCA2OSA5IDEyM2wzMSAyMDBsLTExNSAtMjhsLTQ2IC0yNzFsLTIwNSAyMjZxLTE5IC0xNSAtNDMgLTI4LjV0LTU1IC0yNi41bDIxOSAtMjQydi0yNzZxMCAtMjAgLTUuNSAtNjB0LTEwLjUgLTc5dC01IC01OHEwIC00MCAzMCAtNTMuNXQxMDQgLTEzLjV6TTEyNjIgNjE2cS0xMTkgMCAtMjI5LjUgMzQuNXQtMTkzLjUgOTYuNWw0OCA2NCBxNzMgLTU1IDE3MC41IC04NXQyMDQuNSAtMzBxMTM3IDAgMjQ5IDQ1LjV0MTc5IDEyMXQ2NyAxNjUuNWg4MHEwIC0xMTQgLTc3LjUgLTIwNy41dC0yMDggLTE0OXQtMjg5LjUgLTU1LjV6TTgwMyA1OTVxODAgMCAxNDkgMjkuNXQxMDggNzIuNWwyMjEgLTY3bDMwOSA4NnE0NyAtMzIgMTA0LjUgLTUwdDExNy41IC0xOHE5MSAwIDE2NSAzOHQxMTguNSAxMDMuNXQ0NC41IDE0Ni41cTAgNzYgLTM0LjUgMTQ5dC05NS41IDEzNHQtMTQzIDk5IHEtMzcgMTA3IC0xMTUuNSAxODMuNXQtMTg2IDExNy41dC0yMzAuNSA0MXEtMTAzIDAgLTE5Ny41IC0yNnQtMTY5IC03Mi41dC0xMTcuNSAtMTA4dC00MyAtMTMxLjVxMCAtMzQgMTQuNSAtNjIuNXQ0MC41IC01MC41bC01NSAtNTlxLTM0IDI5IC01NCA2NS41dC0yNSA4MS41cS04MSAtMTggLTE0NSAtNzB0LTEwMSAtMTI1LjV0LTM3IC0xNTguNXEwIC0xMDIgNDguNSAtMTgwLjV0MTI5LjUgLTEyM3QxNzkgLTQ0LjV6Ii8+PC9zdmc+)](https://autofix.ci)
-[![Coverage Status](https://shields.mitmproxy.org/codecov/c/github/mitmproxy/mitmproxy/main.svg?label=codecov)](https://codecov.io/gh/mitmproxy/mitmproxy)
-[![Latest Version](https://shields.mitmproxy.org/pypi/v/mitmproxy.svg)](https://pypi.python.org/pypi/mitmproxy)
-[![Supported Python versions](https://shields.mitmproxy.org/pypi/pyversions/mitmproxy.svg)](https://pypi.python.org/pypi/mitmproxy)
+This is my custom fork of [mitmproxy](https://github.com/mitmproxy/mitmproxy). It contains a few extra modifications and changes that can't exactly be added to mitmproxy but are extremely helpful for me and what I do.
 
-``mitmproxy`` is an interactive, SSL/TLS-capable intercepting proxy with a console
-interface for HTTP/1, HTTP/2, and WebSockets.
+Specifically, this adds tools to mitmproxy to make automatic changes to particular requests & responses, which would normally require its own script to manage each change. It adds commands and a web interface to manage changes, along with the ability to import and export rules.
 
-``mitmdump`` is the command-line version of mitmproxy. Think tcpdump for HTTP.
+## Changes
 
-``mitmweb`` is a web-based interface for mitmproxy.
+### Replace response commands
+
+Several commands and options were added to allow quickly making changes to update future responses to a particular URL without having to write your own script each time directly inside mitmproxy. To use it, you can use the following commands:
+
+- `replace.body.file [file] [flow]`: replaces all future requests to a url with the content of a file (for example, `: replace.body.file ./test.txt @focus` will replace all future requests to the current url with whatever is in the file)
+- `replace.body.content [content] [flow]`: same as `replace.body.file` but instead uses the content provided instead of the file
+- `replace.body.edit [flow]`: this will open vim and allow you to edit the response body and persist the edited response for all future requests to that url (it can be invoked with `: replace.body.edit @focus`)
+- `replace.body.remove [flow]`: removes any active replacements for a current url (example: `: replace.body.remove @focus`)
+- `replace.body.clearall`: clears all active replacements
+
+Replacements work through an option named `replace_response_body` that contains a series of JSON inputs that control body replacements. If you would like to persist certain replacements across sessions, you can do so by setting the `replace_response_body` option in your configuration.
+
+### Interact
+
+The interact tool allows you to easily create "rules" that automatically change information about requests and responses without having to create a script for each change you'd like. It works through based off of **conditions** that when met will result in **actions** as defined by the rule. They are easily managed through a locally hosted web panel, and rules can be easily exported and imported through mitmproxy itself.
+
+Commands:
+- `interact.open`: opens the Interact tool with a valid auth token in your default browser
+- `interact.export [file]`: exports all active rules to a file
+- `interact.import [file]`: imports rules from a file (note: you'll likely need to refresh your active web session to see them)
+
+Options:
+- `interact_server_host`: defines the host that the interact web server runs on, must be set before mitmproxy runs (default: `localhost`)
+- `interact_server_port`: defines the port that the interact web server runs on, must be set before mitmproxy runs (default: `3032`)
+- `interact_auth_token`: defines the authentication token used for the current session. if you set this to a specific value in your default options, you won't have to use `interact.open` each time you want to use it, but you will still have to remember to refresh. (default: randomly generated)
+- `interact_debug`: boolean that defines whether or not stack traces should be included in 500 responses from the interact server. (default: `false`)
+- `interact_rules`: an internal option that stores interact rules in an array (default: `[]`)
 
 ## Installation
 
-The installation instructions are [here](https://docs.mitmproxy.org/stable/overview-installation).
-If you want to install from source, see [CONTRIBUTING.md](./CONTRIBUTING.md).
+To install, you will need to clone this repository and run the following while having Python 3.11 installed:
 
-## Documentation & Help
+```sh
+# make sure you are inside the repository when you run this
+python3 -m venv venv
+venv/bin/pip install -e ".[dev]"
+```
 
-General information, tutorials, and precompiled binaries can be found on the mitmproxy website.
+If run successfully, this sets up the mitmproxy python venv to be able to run mitmproxy. If you would like to check to make sure it's working, you can use `venv/bin/mitmproxy` to see if it runs successfully.
 
-[![mitmproxy.org](https://shields.mitmproxy.org/badge/https%3A%2F%2F-mitmproxy.org-blue.svg)](https://mitmproxy.org/)
+While you could just use `venv/bin/mitmproxy` every time you want to use this version of mitmproxy, you can also add it to the path to make it your default version of mitmproxy (so that when you run `mitmproxy` anywhere, it will load this version).
 
-The documentation for mitmproxy is available on our website:
+Adding it to your path can be a bit tricky since mitmproxy is running in a venv. To make a directory that doesn't override other versions of python, you can run the following:
 
-[![mitmproxy documentation stable](https://shields.mitmproxy.org/badge/docs-stable-brightgreen.svg)](https://docs.mitmproxy.org/stable/)
-[![mitmproxy documentation dev](https://shields.mitmproxy.org/badge/docs-dev-brightgreen.svg)](https://docs.mitmproxy.org/dev/)
+```sh
+mkdir .bin
+cd .bin
+ln -s ../venv/bin/mitmproxy mitmproxy
+ln -s ../venv/bin/mitmweb mitmweb
+ln -s ../venv/bin/mitmdump mitmdump
+cd ..
+```
 
-If you have questions on how to use mitmproxy, please
-use GitHub Discussions!
-
-[![mitmproxy discussions](https://shields.mitmproxy.org/badge/help-github%20discussions-orange.svg)](https://github.com/mitmproxy/mitmproxy/discussions)
-
-## Contributing
-
-As an open source project, mitmproxy welcomes contributions of all forms.
-
-[![Dev Guide](https://shields.mitmproxy.org/badge/dev_docs-CONTRIBUTING.md-blue)](./CONTRIBUTING.md)
-
-Also, please feel free to join our developer Slack! However, please note that the primary purpose of our Slack is direct communication between maintainers and contributors. **If you have questions where the answer might be valuable to others, please use [GitHub Discussions](https://github.com/mitmproxy/mitmproxy/discussions) and not Slack.**
-
-[![Slack Developer Chat](https://shields.mitmproxy.org/badge/slack-mitmproxy-E01563.svg)](http://slack.mitmproxy.org/)
+This will create a `.bin` directory that can be added to your path. You will then need to edit your `~/.bashrc` or `~/.zshrc` to include this file in the path. You can do this by adding `export PATH=$PATH:[absolute path for the .bin folder]` to those files and then using `source ~/.bashrc` or `source ~/.zshrc` respectively. You should then be able to launch this custom version of mitmproxy in your current terminal session and all future sessions by using `mitmproxy`.

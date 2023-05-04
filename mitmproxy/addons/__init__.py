@@ -19,6 +19,7 @@ from mitmproxy.addons import next_layer
 from mitmproxy.addons import onboarding
 from mitmproxy.addons import proxyauth
 from mitmproxy.addons import proxyserver
+from mitmproxy.addons import replaceresponse
 from mitmproxy.addons import save
 from mitmproxy.addons import script
 from mitmproxy.addons import serverplayback
@@ -53,6 +54,7 @@ def default_addons():
         maplocal.MapLocal(),
         modifybody.ModifyBody(),
         modifyheaders.ModifyHeaders(),
+        replaceresponse.ReplaceResponse(),
         stickyauth.StickyAuth(),
         stickycookie.StickyCookie(),
         save.Save(),

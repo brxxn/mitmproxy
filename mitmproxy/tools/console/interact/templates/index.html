@@ -1,0 +1,131 @@
+<html>
+    <head>
+        <title>Interact</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <link rel="stylesheet" href="/static/app.css" />
+    </head>
+    <body>
+        <div id="interact-main">
+            <div class="p-3 mb-3 bg-white border-bottom shadow-sm">
+                <div class="align-items-center d-flex flex-column flex-md-row" style="margin-left: 20px; margin-right: 20px;">
+                    <h5 class="my-0 mr-md-auto">Interact</h5>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-2" id="rule-list-container">
+                        <h3>Rules</h3>
+                        <ul id="rule-list" class="rule-list">
+                            
+                        </ul>
+                        <button type="button" class="btn btn-sm btn-success" style="margin-right: 5px;" onclick="createNewRule()">Add Rule</button><button type="button" class="btn btn-sm btn-danger" style="margin-right: 5px;" onclick="deleteAllRules()">Clear Rules</button>
+                    </div>
+                    <div class="col-10">
+                        <div id="nullstate">
+                            <p>Select a rule from the left or create a new rule to start.</p>
+                        </div>
+                        <div id="unauthenticated-state" hidden>
+                            <p><b>Whoops!</b> You need to open this page from the console so we can make sure it's really you performing actions. Type <code>: interact.open</code> to gain access to this page.</p>
+                            <br />
+                            <p>If you're tired of seeing this screen, you can manually specify a token as the <code>interact_auth_token</code> option so that restarting mitmproxy doesn't require you reauthenticate.</p>
+                        </div>
+                        <div id="primary-state" hidden>
+                            <h3 id="rule-name-label">Rule</h3>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label for="rule-name" class="form-label">Rule ID</label>
+                                    <input class="form-control" type="text" placeholder="(must be a unique name)" id="rule-name" onchange="updateRuleName()">
+                                </div>
+                                <div class="col">
+                                    <label for="rule-type" class="form-label">Rule type</label>
+                                    <select class="form-select" id="rule-type" onchange="updateRuleType()">
+                                        <option value="request">Request</option>
+                                        <option value="response">Response</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <input class="form-check-input" type="checkbox" value="" checked id="rule-enabled" onchange="updateRuleEnabled()">
+                                <label class="form-check-label" for="rule-enabled">Enabled</label>
+                            </div>
+                            <div class="mb-3">
+                                <h5>Conditions</h5>
+                                <div class="mb-3">
+                                    <input class="form-check-input" type="checkbox" value="" checked id="conditions-all-required" onchange="updateAllConditionsRequired()">
+                                    <label class="form-check-label" for="conditions-all-required">All conditions required (if not selected, any conditions being met will trigger the rule)</label>
+                                </div>
+                                <div id="conditions">
+                                    <div class="mb-3" id="condition-1">
+                                        <form class="row gy-2 gx-3 align-items-center">
+                                            <div class="col-auto">
+                                                <label for="rule-type" class="form-label">Attribute</label>
+                                                <select class="form-select" id="condition-type">
+                                                    <option value="request_url">Request URL</option>
+                                                    <option value="request_host">Request Host</option>
+                                                    <option value="request_body">Request Body</option>
+                                                    <option value="response_status_code">Response Status Code</option>
+                                                    <option value="response_content_type">Response Content Type</option>
+                                                    <option value="response_body">Response Body</option>
+                                                    <option value="delete">[delete condition]</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-auto">
+                                                <label for="condition-operator" class="form-label">Condition</label>
+                                                <select class="form-select" id="condition-operator">
+                                                    <option id="condition-attribute-op-is" selected>is</option>
+                                                    <option id="condition-attribute-op-is-ignore-case">is (ignore casing)</option>
+                                                    <option id="condition-attribute-op-contains">includes</option>
+                                                    <option id="condition-attribute-op-contains-ignore-case">includes (ignore casing)</option>
+                                                    <option id="condition-attribute-op-matches-regex">matches (regex)</option>
+                                                    <option id="condition-attribute-op-matches-regex-ignore-case">matches (regex, attribute lowercased)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-5">
+                                                <label for="condition-value" class="form-label">Value</label>
+                                                <input class="form-control" type="text" placeholder="Value" id="condition-value">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-success" style="margin-right: 5px;" onclick="addCondition()">Add condition</button><button type="button" class="btn btn-sm btn-danger" onclick="clearConditions()">Clear</button>
+                            </div>
+                            <div class="mb-3">
+                                <h5>Actions</h5>
+                                <div id="actions">
+                                    <div class="mb-3" id="action-1">
+                                        <form class="row gy-2 gx-3 align-items-center">
+                                            <div class="col-auto">
+                                                <label for="rule-type" class="form-label">Action</label>
+                                                <select class="form-select" id="action-type">
+                                                    <option id="action-type-req-url" selected>Set request URL</option>
+                                                    <option id="action-type-req-body">Set request body</option>
+                                                    <option id="action-type-req-host">Set request header</option>
+                                                    <option id="action-type-req-method">Set request method</option>
+                                                    <option id="action-type-res-body">Set response body</option>
+                                                    <option id="action-type-res-header">Set response header</option>
+                                                    <option id="action-type-res-status">Set response status code</option>
+                                                    <option id="action-type-delete">[delete action]</option>
+                                                </select>
+                                            </div>
+                                        </form>
+                                        <div class="mb-3" id="action-input">
+                                            <label for="action-response-body" class="form-label">Response body</label>
+                                            <textarea class="form-control" id="action-response-body" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-sm btn-success" style="margin-right: 5px;" onclick="addAction()">Add action</button><button type="button" class="btn btn-sm btn-danger" onclick="clearActions()">Clear</button>
+                            </div>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-primary" style="margin-right: 5px;" onclick="saveRule()">Save</button><button type="button" class="btn btn-danger" onclick="deleteRule(originalRule)">Delete Rule</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/static/app.js"></script>
+    </body>
+</html>
