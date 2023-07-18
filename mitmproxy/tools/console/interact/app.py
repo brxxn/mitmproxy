@@ -173,6 +173,7 @@ class DeleteAllRulesHandler(RequestHandler):
 
 class BackupImportHandler(RequestHandler):
 
+    @require_auth
     def post(self):
         filename = self.json['filename']
         success = self.application.import_rules(filename)
@@ -182,6 +183,7 @@ class BackupImportHandler(RequestHandler):
 
 class BackupExportHandler(RequestHandler):
 
+    @require_auth
     def post(self):
         filename = self.json['filename']
         success = self.application.export_rules(filename)
