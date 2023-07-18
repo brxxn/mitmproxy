@@ -162,6 +162,7 @@ let currentRuleIndex = -1;
 // let currentRule = demoRule;
 
 let unauthenticated = false;
+let processingImportOrExport = false;
 
 const createNewRule = () => {
     originalRule = {
@@ -234,7 +235,7 @@ const processErrorResponse = async (response) => {
         activateUnauthenticatedState();
         return null;
     }
-    console.error(`failed to process request with status ${response.status} and content type ${request.headers.get('content-type')}.`);
+    console.error(`failed to process request with status ${response.status} and content type ${response.headers.get('content-type')}.`);
     return null;
 }
 
@@ -330,6 +331,47 @@ const updateConditionOperator = (index) => {
 
 const updateConditionValue = (index) => {
     currentRule.conditions[index].value = document.getElementById(`condition-value-${index}`).value;
+}
+
+const closeAllModals = () => {
+    if (processingImportOrExport) {
+        return;
+    }
+    document.getElementById('import-modal').style.display = 'none';
+    document.getElementById('export-modal').style.display = 'none';
+    document.getElementById('backdrop').style.display = 'none';
+    document.getElementById('import-error-text').hidden = true;
+    document.getElementById('export-error-text').hidden = true;
+    document.getElementById('import-modal').classList.remove('show');
+    document.getElementById('export-modal').classList.remove('show');
+}
+
+const openImport = () => {
+    if (document.getElementById('import-modal').style.display !== 'none' || processingImportOrExport) {
+        return;
+    }
+    document.getElementById('import-file-name').value = '';
+    document.getElementById('backdrop').style.display = 'block';
+    document.getElementById('import-modal').style.display = 'block';
+    document.getElementById('import-modal').classList.add('show');
+}
+
+const openExport = () => {
+    if (document.getElementById('export-modal').style.display !== 'none' || processingImportOrExport) {
+        return;
+    }
+    document.getElementById('export-file-name').value = '';
+    document.getElementById('backdrop').style.display = 'block';
+    document.getElementById('export-modal').style.display = 'block';
+    document.getElementById('export-modal').classList.add('show');
+}
+
+const setProcessingImportOrExport = async (processing) => {
+    processingImportOrExport = processing;
+    document.getElementById('import-close-button').disabled = processing;
+    document.getElementById('import-confirm-button').disabled = processing;
+    document.getElementById('export-close-button').disabled = processing;
+    document.getElementById('export-confirm-button').disabled = processing;
 }
 
 const generateCondition = (index) => {
@@ -528,6 +570,31 @@ const deleteAllRules = async () => {
     }
 }
 
+const importFromFilename = async (filename) => {
+    let resp = await makePostRequest('/v1/backup/import', {filename});
+    if (resp) {
+        document.getElementById('import-error-text').hidden = true;
+        rules = resp.rules;
+        originalRule = null;
+        currentRule = null;
+        updateRuleList();
+        renderRule();
+        closeAllModals();
+        return;
+    }
+    document.getElementById('import-error-text').hidden = false;
+}
+
+const exportFromFilename = async (filename) => {
+    let resp = await makePostRequest('/v1/backup/export', {filename});
+    if (resp) {
+        document.getElementById('export-error-text').hidden = true;
+        closeAllModals();
+        return;
+    }
+    document.getElementById('export-error-text').hidden = false;
+}
+
 const saveRule = async () => {
     if (!currentRule || !originalRule) {
         return;
@@ -544,6 +611,41 @@ const saveRule = async () => {
     currentRule = rules[currentRuleIndex];
     updateRuleList();
     renderRule();
+}
+
+const duplicateRule = async () => {
+    await saveRule();
+    originalRule.name += ' (duplicated)';
+    currentRule = originalRule;
+    currentRuleIndex = -1;
+    updateRuleList();
+    renderRule();
+}
+
+const importRules = async () => {
+    if (processingImportOrExport) {
+        return;
+    }
+    let filename = document.getElementById('import-file-name').value;
+    if (!filename || !filename.length) {
+        return;
+    }
+    setProcessingImportOrExport(true);
+    await importFromFilename(filename);
+    setProcessingImportOrExport(false);
+}
+
+const exportRules = async () => {
+    if (processingImportOrExport) {
+        return;
+    }
+    let filename = document.getElementById('export-file-name').value;
+    if (!filename || !filename.length) {
+        return;
+    }
+    setProcessingImportOrExport(true);
+    await exportFromFilename(filename);
+    setProcessingImportOrExport(false);
 }
 
 const renderRule = () => {

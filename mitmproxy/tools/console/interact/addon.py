@@ -99,7 +99,7 @@ class InteractAddon:
             flow.response.headers.pop(action.arguments['name'], None)
             flow.response.headers.add(action.arguments['name'], action.arguments['value'])
         elif action.type == 'set_response_status':
-            flow.response.status_code = action.arguments['status']
+            flow.response.status_code = int(action.arguments['status'])
         elif action.type == 'replace_request_url':
             flow.request.url = re.sub(action.arguments['regex'], action.arguments['value'], flow.request.url)
         elif action.type == 'replace_request_body':

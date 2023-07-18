@@ -1,4 +1,5 @@
 from __future__ import annotations
+from pathlib import Path
 import json
 import os
 import tornado.web
@@ -28,6 +29,8 @@ class Application(tornado.web.Application):
                 (r'/v1/rules', RulesHandler),
                 (r'/v1/rules/delete', DeleteRuleHandler),
                 (r'/v1/rules/delete-all', DeleteAllRulesHandler),
+                (r'/v1/backup/import', BackupImportHandler),
+                (r'/v1/backup/export', BackupExportHandler),
                 (r'^/(?!static).*$', IndexHandler)
             ]
         )
@@ -43,6 +46,27 @@ class Application(tornado.web.Application):
             interact_rule_strings
         )
         return sorted(self.get_interact_rules(), key=lambda r: r.name)
+    
+    def import_rules(self, filename: str) -> bool:
+        try:
+            data = Path(filename).expanduser().read_text()
+            option_value = json.loads(data)
+            setattr(
+                self.master.options,
+                'interact_rules',
+                option_value
+            )
+            return True
+        except OSError:
+            return False
+    
+    def export_rules(self, filename: str) -> bool:
+        try:
+            Path(filename).expanduser().touch()
+            Path(filename).expanduser().write_text(json.dumps(self.master.options.interact_rules))
+            return True
+        except OSError:
+            return False
     
     def get_interact_rule(self, name: str) -> InteractRule|None:
         rules = self.get_interact_rules(name)
@@ -146,3 +170,21 @@ class DeleteAllRulesHandler(RequestHandler):
     @require_auth
     def post(self):
         self.write({'rules':[a.to_dict() for a in self.application.save_interact_rules([])]})
+
+class BackupImportHandler(RequestHandler):
+
+    def post(self):
+        filename = self.json['filename']
+        success = self.application.import_rules(filename)
+        if not success:
+            self.set_status(400)
+        self.write({'rules':[a.to_dict() for a in self.application.get_interact_rules()]})
+
+class BackupExportHandler(RequestHandler):
+
+    def post(self):
+        filename = self.json['filename']
+        success = self.application.export_rules(filename)
+        if not success:
+            self.set_status(400)
+        self.write({'success': success})
