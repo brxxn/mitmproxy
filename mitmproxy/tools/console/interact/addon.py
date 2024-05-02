@@ -89,8 +89,11 @@ class InteractAddon:
         elif action.type == 'set_request_body':
             flow.request.content = action.arguments['body'].encode()
         elif action.type == 'set_request_header':
+            if action.arguments['value'] == '__clear__':
+                flow.request.headers.set_all(action.arguments['name'], [])
+                return
             flow.request.headers.pop(action.arguments['name'], None)
-            flow.request.headers.add(action.arguments['name'], action.arguments['value'])
+            flow.request.headers.set_all(action.arguments['name'], [action.arguments['value']])
         elif action.type == 'set_request_method':
             flow.request.method = action.arguments['method']
         elif action.type == 'set_response_body':

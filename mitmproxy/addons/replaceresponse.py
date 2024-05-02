@@ -124,7 +124,7 @@ class ReplaceResponse:
         logger.info(f'Added file replacement for {flow.request.url}')
 
     @command.command('replace.body.content')
-    def add_file_replacement(self, content: str, flow: flow.Flow):
+    def add_content_replacement(self, content: str, flow: flow.Flow):
         '''
         Replace all future responses to a path with a file
         '''

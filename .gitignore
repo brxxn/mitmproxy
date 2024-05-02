@@ -19,6 +19,8 @@ mitmproxy/contrib/kaitaistruct/**/*.ksy
 __pycache__
 .hypothesis/
 .hugo_build.lock
+.bin
+.github
 
 # UI
 
@@ -31,6 +33,3 @@ sslkeylogfile.log
 coverage.xml
 web/coverage/
 .mypy_cache/
-
-# Install
-.bin/
