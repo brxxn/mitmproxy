@@ -140,6 +140,26 @@ def raw(f: flow.Flow, separator=b"\r\n\r\n") -> bytes:
     else:
         raise exceptions.CommandError("Can't export flow with no request or response.")
 
+def raw_request_content(f: flow.Flow) -> bytes:
+    request_present = (
+        isinstance(f, http.HTTPFlow) and f.request and f.request.raw_content is not None
+    )
+
+    if not request_present:
+        raise exceptions.CommandError("Request missing")
+
+    return f.request.content
+
+def raw_response_content(f: flow.Flow) -> bytes:
+    request_present = (
+        isinstance(f, http.HTTPFlow) and f.response and f.response.raw_content is not None
+    )
+
+    if not request_present:
+        raise exceptions.CommandError("Response missing")
+
+    return f.response.content
+
 
 formats: dict[str, Callable[[flow.Flow], str | bytes]] = dict(
     curl=curl_command,
@@ -147,6 +167,8 @@ formats: dict[str, Callable[[flow.Flow], str | bytes]] = dict(
     raw=raw,
     raw_request=raw_request,
     raw_response=raw_response,
+    request_content=raw_request_content,
+    response_content=raw_response_content
 )
 
 
