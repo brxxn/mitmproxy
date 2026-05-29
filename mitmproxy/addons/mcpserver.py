@@ -3,14 +3,44 @@ from __future__ import annotations
 import asyncio
 import logging
 from typing import Any
+from urllib.parse import urlparse
 
 import fastmcp
+from starlette.middleware import Middleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request as StarletteRequest
+from starlette.responses import Response as StarletteResponse
 
 from mitmproxy import ctx
 from mitmproxy import flowfilter
 from mitmproxy import http
 
 logger = logging.getLogger(__name__)
+
+_LOCALHOST_HOSTS = {"localhost", "127.0.0.1", "::1"}
+
+
+class _OriginCheckMiddleware(BaseHTTPMiddleware):
+    """Block requests that carry a browser Origin header from a non-localhost host.
+
+    A web page cannot set or spoof the Origin header, so any request arriving
+    with Origin pointing at a remote host must have come from a browser tab on
+    that site — a classic CSRF vector against local servers.
+    """
+
+    async def dispatch(self, request: StarletteRequest, call_next):
+        origin = request.headers.get("origin")
+        if origin is not None:
+            try:
+                host = urlparse(origin).hostname or ""
+            except Exception:
+                host = ""
+            if host not in _LOCALHOST_HOSTS:
+                return StarletteResponse(
+                    "Forbidden: cross-origin browser requests are not allowed",
+                    status_code=403,
+                )
+        return await call_next(request)
 
 
 _PREVIEW_LEN = 200
@@ -208,6 +238,7 @@ class MCPServer:
                 port=port,
                 show_banner=False,
                 log_level="warning",
+                middleware=[Middleware(_OriginCheckMiddleware)],
             )
         )
         logger.info(f"MCP server listening on http://{host}:{port}/sse")
