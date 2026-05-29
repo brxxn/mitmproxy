@@ -26,6 +26,7 @@ from mitmproxy.addons import serverplayback
 from mitmproxy.addons import stickyauth
 from mitmproxy.addons import stickycookie
 from mitmproxy.addons import tlsconfig
+from mitmproxy.addons import mcpserver
 from mitmproxy.addons import upstream_auth
 
 
@@ -60,4 +61,5 @@ def default_addons():
         save.Save(),
         tlsconfig.TlsConfig(),
         upstream_auth.UpstreamAuth(),
+        mcpserver.MCPServer(),
     ]
